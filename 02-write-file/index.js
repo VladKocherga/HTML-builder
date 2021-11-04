@@ -1,5 +1,4 @@
 const fs = require("fs");
-const chalk = require("chalk");
 const readLine = require("readline");
 const process = require("process");
 
@@ -9,7 +8,7 @@ let streamTwo = new fs.createWriteStream("02-write-file/message.txt", {
 let inter = readLine.createInterface({
   input: process.stdin,
   output: process.stdout,
-  prompt: chalk.blue("Hello, please enter some text: \n"),
+  prompt: "Hello, please enter some text: \n",
 });
 inter.prompt();
 
@@ -20,6 +19,6 @@ inter.on("SIGINT", () => {
   inter.close();
 });
 inter.on("close", () => {
-  console.log(chalk.blue("the end"));
+  console.log("the end");
   streamTwo.end();
 });
