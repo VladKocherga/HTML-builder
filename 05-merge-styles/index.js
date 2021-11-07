@@ -1,20 +1,20 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-let styles = path.join(__dirname, "styles");
-let inOnestyles = path.join(__dirname, "project-dist", "bundle.css");
+let styles = path.join(__dirname, 'styles');
+let inOnestyles = path.join(__dirname, 'project-dist', 'bundle.css');
 
 function createFile(inOnestyles) {
   fs.stat(inOnestyles, function (err) {
     if (err) {
-      fs.open(inOnestyles, "w", (err) => {
+      fs.open(inOnestyles, 'w', (err) => {
         if (err) throw err;
         fileInOne();
       });
     } else {
       fs.unlink(inOnestyles, (err) => {
         if (err) throw err;
-        fs.open(inOnestyles, "w", (err) => {
+        fs.open(inOnestyles, 'w', (err) => {
           if (err) throw err;
         });
         fileInOne();
@@ -30,10 +30,10 @@ function fileInOne() {
       fs.stat(fileSrc, (err, stat) => {
         if (err) throw err;
         if (stat.isFile()) {
-          if (file.name.split(".").reverse().splice(0, 1).join("") === "css") {
+          if (file.name.split('.').reverse().splice(0, 1).join('') === 'css') {
             fs.readFile(
               path.join(styles, file.name),
-              { encoding: "utf-8" },
+              { encoding: 'utf-8' },
               (err, data) => {
                 if (err) throw err;
 
@@ -50,4 +50,4 @@ function fileInOne() {
 }
 
 createFile(inOnestyles);
-console.log("End!!");
+console.log('End!!');

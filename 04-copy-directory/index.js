@@ -1,8 +1,8 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-let dir = path.join(__dirname, "files");
-let copy = path.join(__dirname, "files-copy");
+let dir = path.join(__dirname, 'files');
+let copy = path.join(__dirname, 'files-copy');
 function createDir(copy) {
   fs.stat(copy, function (err) {
     if (err) {
@@ -49,4 +49,4 @@ function copyDir(dir, copy) {
     });
   });
 }
-console.log("End!");
+console.log('End!');
