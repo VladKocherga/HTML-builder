@@ -7,6 +7,7 @@ let copy = path.join(__dirname, 'project-dist');
 let styleUpdate = path.join(__dirname, 'project-dist', 'style.css');
 let index = path.join(__dirname, 'project-dist', 'index.html');
 let template = path.join(__dirname, 'template.html');
+let components = path.join(__dirname, 'components');
 let assetsOrigin = path.join(__dirname, 'assets');
 let assets = path.join(__dirname, 'project-dist', 'assets');
 
@@ -32,8 +33,8 @@ function createFile(style) {
           fs.appendFile(index, data, (err) => {
             if (err) throw err;
           });
+          tempCreate();
         });
-        // tempCreate();
       });
     } else {
       fs.unlink(style, (err) => {
@@ -53,13 +54,62 @@ function createFile(style) {
           fs.appendFile(index, data, (err) => {
             if (err) throw err;
           });
+          tempCreate();
         });
-        // tempCreate();
       });
     }
   });
 }
+/*Index.html */
+function tempCreate() {
+  fs.readFile(index, { encoding: 'utf-8' }, (err, data) => {
+    let at;
+    let reg;
 
+    if (err) throw err;
+    if (/{{.+}}/gi.test(data)) {
+      // console.log(data.match(/{{.+}}/gi));
+      reg = data.match(/{{.+}}/gi);
+      reg = Array.from(reg);
+      at = data.match(/{{.+}}/gi);
+      at = Array.from(reg);
+      for (let i = 0; i < reg.length; i++) {
+        reg[i] = reg[i].replace(/{{/gi, '').replace(/}}/gi, '.html');
+        fs.readdir(components, { withFileTypes: true }, (err, files) => {
+          if (err) throw err;
+          files.forEach((file) => {
+            let fileSrc = path.join(components, file.name);
+            fs.stat(fileSrc, (err, stat) => {
+              if (err) throw err;
+              if (stat.isFile()) {
+                if (
+                  file.name.split('.').reverse().splice(0, 1).join('') ===
+                  'html'
+                ) {
+                  fs.readFile(
+                    path.join(components, file.name),
+                    { encoding: 'utf-8' },
+                    (err, rep) => {
+                      if (err) throw err;
+                      if (file.name == reg[i]) {
+                        data = data.replace(at[i], rep);
+                      }
+                      fs.writeFile(index, data, (err) => {
+                        if (err) {
+                          console.error(err);
+                        }
+                      });
+                    }
+                  );
+                }
+              }
+            });
+          });
+        });
+      }
+    }
+  });
+}
 createFile(styleUpdate);
 function styleCreate() {
   fs.readdir(styles, { withFileTypes: true }, (err, files) => {
@@ -87,27 +137,8 @@ function styleCreate() {
     });
   });
 }
-/*create aassets folder*/
-function createDir(assets) {
-  fs.stat(assets, function (err) {
-    if (err) {
-      fs.mkdir(assets, (err) => {
-        if (err) throw err;
-        copyDir(assetsOrigin, assets);
-      });
-    } else {
-      fs.rmdir(assets, { recursive: true }, (err) => {
-        if (err) throw err;
-        fs.mkdir(assets, (err) => {
-          if (err) throw err;
-        });
-        copyDir(assetsOrigin, assets);
-      });
-    }
-  });
-}
-createDir(assets);
-/*file in assets */
+/*create aassets*/
+
 function copyDir(assetsOrigin, assets) {
   fs.readdir(assetsOrigin, { withFileTypes: true }, (err, files) => {
     if (err) throw err;
@@ -137,3 +168,23 @@ function copyDir(assetsOrigin, assets) {
     });
   });
 }
+function createDir(assets) {
+  fs.stat(assets, function (err) {
+    if (err) {
+      fs.mkdir(assets, (err) => {
+        if (err) throw err;
+        copyDir(assetsOrigin, assets);
+      });
+    } else {
+      fs.rmdir(assets, { recursive: true }, (err) => {
+        if (err) throw err;
+        fs.mkdir(assets, (err) => {
+          if (err) throw err;
+        });
+        copyDir(assetsOrigin, assets);
+      });
+    }
+  });
+}
+createDir(assets);
+console.log('End!');
