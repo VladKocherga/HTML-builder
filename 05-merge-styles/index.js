@@ -1,3 +1,4 @@
+/*При использовании скрипта, убедитесь что live server выключен */
 const fs = require('fs');
 const path = require('path');
 
